@@ -13,6 +13,8 @@ import (
 
 	"example.com/todos/pkg/db"
 	"example.com/todos/pkg/handlers"
+	"example.com/todos/pkg/logging"
+	"example.com/todos/pkg/middleware"
 
 	"github.com/caarlos0/env/v11"
 	"github.com/gorilla/mux"
@@ -96,6 +98,12 @@ func createServer(cfg Config, handler http.Handler) *http.Server {
 func setupRouter(h *handlers.RouteHandler) http.Handler {
 	// Initialize the router
 	r := mux.NewRouter()
+
+	logger := logging.NewLogger(os.Stdout)
+	m := func(next http.Handler) http.Handler {
+		return middleware.LoggingMiddleware(logger, middleware.RequestIDMiddleware(next))
+	}
+	r.Use(m)
 
 	// Define API routes and their handlers
 	r.HandleFunc("/", handlers.Healthy).Methods("GET")
