@@ -25,6 +25,10 @@ type DB struct {
 	conn *pgx.Conn
 }
 
+func (db *DB) Close() error {
+	return db.conn.Close(context.Background())
+}
+
 func (db *DB) Create(todo models.Todo) (id string, err error) {
 	err = db.conn.QueryRow(context.Background(), "INSERT INTO todos (title) VALUES ($1) RETURNING id", todo.Title).Scan(&id)
 	return id, err
