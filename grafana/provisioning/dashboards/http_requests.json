@@ -1,0 +1,23 @@
+{
+  "id": null,
+  "uid": "http-reqs",
+  "title": "HTTP Requests",
+  "schemaVersion": 36,
+  "version": 1,
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "HTTP Requests by Path/Method",
+      "targets": [
+        {
+          "expr": "sum by (path, method) (http_requests_total)",
+          "legendFormat": "{{path}} {{method}}"
+        }
+      ],
+      "datasource": {
+        "type": "prometheus",
+        "uid": "Prometheus"
+      }
+    }
+  ]
+}
