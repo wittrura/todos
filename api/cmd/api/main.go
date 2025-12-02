@@ -100,12 +100,22 @@ func setupRouter(h *handlers.RouteHandler) http.Handler {
 	r := mux.NewRouter()
 
 	logger := logging.NewLogger(os.Stdout)
-	m := func(next http.Handler) http.Handler {
-		return middleware.LoggingMiddleware(logger, middleware.RequestIDMiddleware(next))
-	}
-	r.Use(m)
+	r.Use(
+		func(next http.Handler) http.Handler {
+			return middleware.MetricsMiddleware(func(r *http.Request) {
+				handlers.HttpRequestCounter.WithLabelValues(r.URL.Path, r.Method).Inc()
+			}, next)
+		},
+		func(next http.Handler) http.Handler {
+			return middleware.LoggingMiddleware(logger, next)
+		},
+		func(next http.Handler) http.Handler {
+			return middleware.RequestIDMiddleware(next)
+		},
+	)
 
 	// Define API routes and their handlers
+	r.Handle("/metrics", handlers.NewMetricsHandler())
 	r.HandleFunc("/", handlers.Healthy).Methods("GET")
 	r.HandleFunc("/todos", h.GetTodos).Methods("GET")
 	r.HandleFunc("/todos/{id}", h.GetTodo).Methods("GET")

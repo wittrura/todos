@@ -64,7 +64,6 @@ func LoggingMiddleware(logger Logger, next http.Handler) http.Handler {
 			"status":      recorder.Status,
 			"duration_ms": duration.Milliseconds(),
 		})
-
 	})
 }
 
@@ -73,4 +72,12 @@ func RequestIDFromContext(ctx context.Context) string {
 		return id.(string)
 	}
 	return uuid.New().String()
+}
+
+func MetricsMiddleware(increment func(*http.Request), next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		increment(r)
+
+		next.ServeHTTP(w, r)
+	})
 }
