@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -103,7 +104,9 @@ func setupRouter(h *handlers.RouteHandler) http.Handler {
 	r.Use(
 		func(next http.Handler) http.Handler {
 			return middleware.MetricsMiddleware(func(r *http.Request) {
-				handlers.HttpRequestCounter.WithLabelValues(r.URL.Path, r.Method).Inc()
+				if !strings.Contains(r.URL.Path, "/metrics") {
+					handlers.HttpRequestCounter.WithLabelValues(r.URL.Path, r.Method).Inc()
+				}
 			}, next)
 		},
 		func(next http.Handler) http.Handler {
