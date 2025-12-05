@@ -34,23 +34,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
-  pgadmin:
-    image: dpage/pgadmin4
-    ports:
-    - 5050:80
-    environment:
-      # Required by pgAdmin
-      PGADMIN_DEFAULT_EMAIL: demo@example.com
-      PGADMIN_DEFAULT_PASSWORD: secret
-
-      # Don't require the user to login
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-
-      # Don't require a "master" password after logging in
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
   prometheus:
     image: prom/prometheus
-    container_name: prometheus
     command:
     - "--config.file=/etc/prometheus/prometheus.yml"
     ports:
@@ -63,7 +48,6 @@ services:
     - api
   grafana:
     image: grafana/grafana
-    container_name: grafana
     ports:
     - 3000:3000
     restart: unless-stopped
