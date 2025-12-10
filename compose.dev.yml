@@ -1,5 +1,8 @@
 services:
   api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile.dev
     environment:
       APP_ENV: development
     volumes:

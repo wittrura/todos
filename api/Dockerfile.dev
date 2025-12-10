@@ -1,0 +1,21 @@
+# Stage 1: Build the Go application
+FROM golang:1.25-alpine AS builder
+
+# Creates an app directory to hold your app’s source code
+WORKDIR /app
+ 
+RUN go install github.com/air-verse/air@latest
+
+# Effectively tracks changes within go.mod and go.sum files
+COPY go.mod go.sum ./
+
+COPY . .
+ 
+# Installs Go dependencies
+RUN go mod download
+
+# Tells Docker which network port your container listens on
+ENV PORT=8080
+EXPOSE 8080
+
+CMD ["air", "-c", ".air.toml"]
