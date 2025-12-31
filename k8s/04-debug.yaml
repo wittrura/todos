@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: debug
+  namespace: todos
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: debug
+  template:
+    metadata:
+      labels:
+        app: debug
+    spec:
+      containers:
+        - name: debug
+          image: nicolaka/netshoot
+          command: ["sleep", "infinity"]
