@@ -7,6 +7,9 @@ services:
       APP_ENV: development
     volumes:
     - ./api:/app
+  db:
+    ports:
+    - "5432:5432" # optional expose for local tools
   pgadmin:
     image: dpage/pgadmin4
     ports:

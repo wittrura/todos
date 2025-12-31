@@ -18,14 +18,15 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+    - app
+    - monitoring
   db:
     image: postgres:16
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app
       POSTGRES_DB: app
-    ports:
-    - "5432:5432" # optional expose for local tools
     volumes:
     - pgdata:/var/lib/postgresql/data
     - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -34,6 +35,10 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+    networks:
+      app:
+        aliases:
+        - postgres.internal
   prometheus:
     image: prom/prometheus
     command:
@@ -46,6 +51,8 @@ services:
     - prom_data:/prometheus
     depends_on:
     - api
+    networks:
+    - monitoring
   grafana:
     image: grafana/grafana
     ports:
@@ -58,6 +65,16 @@ services:
     - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
     - prometheus
+    networks:
+    - monitoring
+  debug:
+    image: nicolaka/netshoot
+    command: "sleep infinity"
+    networks:
+    - app
 volumes:
   pgdata:
   prom_data:
+networks:
+  app:
+  monitoring:

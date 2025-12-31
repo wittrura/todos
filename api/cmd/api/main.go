@@ -119,7 +119,7 @@ func setupRouter(h *handlers.RouteHandler) http.Handler {
 
 	// Define API routes and their handlers
 	r.Handle("/metrics", handlers.NewMetricsHandler())
-	r.HandleFunc("/", handlers.Healthy).Methods("GET")
+	r.HandleFunc("/health", handlers.Healthy).Methods("GET")
 	r.HandleFunc("/todos", h.GetTodos).Methods("GET")
 	r.HandleFunc("/todos/{id}", h.GetTodo).Methods("GET")
 	r.HandleFunc("/todos/{id}", h.UpdateTodo).Methods("PATCH")
